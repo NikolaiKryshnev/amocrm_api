@@ -9,7 +9,7 @@ CASHIER_MESSAGE_TYPE = "message_cashier"  # Сообщение кассиру
 INVOICE_PAID_TYPE = "invoice_paid"  # Оплата счета
 GEOLOCATION_TYPE = "geolocation"  # Геолокация
 SMS_IN_TYPE = "sms_in"  # Входящее сообщение
-SMS_OUT_TYPE = "sms_out"  # Исходящее сообщение
+ATTACMENT_TYPE = "attachment"
 # "extended_service_message	Системное примечание
 
 
@@ -61,3 +61,6 @@ class _Note(model.Model):
     address = _AutoTypeField("address", note_type=GEOLOCATION_TYPE)
     longitude = _AutoTypeField("longitude", note_type=GEOLOCATION_TYPE)
     latitude = _AutoTypeField("latitude", note_type=GEOLOCATION_TYPE)
+    
+    file_uuid = _AutoTypeField("file_uuid", note_type=ATTACMENT_TYPE)
+    file_name = _AutoTypeField("file_name", note_type=ATTACMENT_TYPE)
