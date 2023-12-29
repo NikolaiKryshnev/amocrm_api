@@ -31,10 +31,14 @@ class NotesField(fields._UnEditableField):
 class _AutoTypeField(fields._Field):
     def __init__(self, *args, note_type, **kwargs):
         self._auto_type = note_type
+        print(note_type)
+        print(self._auto_type)
         super().__init__(*args, blank=True, path=["params"], **kwargs)
 
     def on_set_instance(self, instance, value):
         instance._data["note_type"] = self._auto_type
+        print(instance._data["note_type"])
+        print(value)
         return super().on_set_instance(instance, value)
 
 
