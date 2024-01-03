@@ -38,6 +38,7 @@ class _AutoTypeField(fields._Field):
 
 	def on_set_instance(self, instance, value):
 		instance._data["note_type"] = self._auto_type
+		print(f"on_set_instance - **instance._data: {instance._data["note_type"]}")
 		return super().on_set_instance(instance, value)
 
 
@@ -67,3 +68,4 @@ class _Note(model.Model):
 	
 	file_uuid = _AutoTypeField("file_uuid", note_type=ATTACMENT_TYPE)
 	file_name = _AutoTypeField("file_name", note_type=ATTACMENT_TYPE)
+
