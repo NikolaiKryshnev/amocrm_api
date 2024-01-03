@@ -122,11 +122,9 @@ class GenericInteraction(BaseInteraction):
     def create(self, data):
         response, status = self.request("post", self._get_path(), data=[data])
 	file_name = "output.txt"
-	# Открываем файл для записи (или создаем, если не существует)
 	with open(file_name, "w") as file:
-	# Записываем значение переменной в файл
-		file.write(instance._data["note_type"])
-		file.write(value)
+	file.write(self)
+	file.write(data)
 	print(data)
         if status == 400:
             raise exceptions.ValidationError(response)
