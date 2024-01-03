@@ -56,6 +56,12 @@ class BaseInteraction:
 		raise exceptions.AmoApiException("Wrong status {} ({})".format(response.status_code, response.text))
 
 	def request(self, method, path, data=None, params=None, headers=None, include=None):
+		print(f"request - self: {self}")
+		print(f"request - method: {method}")
+		print(f"request - path: {path}")
+		print(f"request - data: {data}")
+		print(f"request - params: {params}")
+		print(f"request - include: {include}")
 		params = params or {}
 		if include:
 			params["with"] = ",".join(include)
@@ -139,5 +145,6 @@ class GenericInteraction(BaseInteraction):
 		if status == 400:
 			raise exceptions.ValidationError(response)
 		return response
+
 
 
