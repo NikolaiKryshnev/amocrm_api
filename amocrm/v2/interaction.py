@@ -33,11 +33,8 @@ class BaseInteraction:
 
 	def _request(self, method, path, data=None, params=None, headers=None):
 
-		print(f"Creating with self: {self}")
-		print(f"Creating with method: {method}")
-		print(f"Creating with data: {data}")
-		print(f"Creating with params: {params}")
-		print(f"Creating with headers: {headers}")
+		print(f"_request - method: {method}")
+		print(f"_request - data: {data}")
 		headers = headers or {}
 		headers.update(self.get_headers())
 		try:
@@ -54,6 +51,8 @@ class BaseInteraction:
 			raise exceptions.PermissionsDenyException()
 		if response.status_code == 402:
 			raise ValueError("Тариф не позволяет включать покупателей")
+
+		print(f"_request - response.text: {response.text}")
 		raise exceptions.AmoApiException("Wrong status {} ({})".format(response.status_code, response.text))
 
 	def request(self, method, path, data=None, params=None, headers=None, include=None):
@@ -126,10 +125,12 @@ class GenericInteraction(BaseInteraction):
 		return response
 
 	def create(self, data):
-		print(f"Creating with data: {data}")
+		print(f"create - data: {data}")
 		response, status = self.request("post", self._get_path(), data=[data])
 		if status == 400:
 			raise exceptions.ValidationError(response)
+
+		print(f"create - response: {response}")
 		return response["_embedded"][self._get_field()][0]
 
 	def update(self, object_id, data):
@@ -138,4 +139,5 @@ class GenericInteraction(BaseInteraction):
 		if status == 400:
 			raise exceptions.ValidationError(response)
 		return response
+
 
