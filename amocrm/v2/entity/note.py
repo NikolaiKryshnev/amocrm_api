@@ -14,68 +14,53 @@ ATTACMENT_TYPE = "attachment"
 
 
 class NotesInteraction(GenericInteraction):
-    path = "{entity_type}/{entity_id}/notes"
+	path = "{entity_type}/{entity_id}/notes"
 
 
 class NotesField(fields._UnEditableField):
-    def __init__(self):
-        super().__init__(blank=True, is_embedded=False)
+	def __init__(self):
+		super().__init__(blank=True, is_embedded=False)
 
-    def on_get_instance(self, instance, value):
-        class Note(_Note):
-            objects = manager.Manager(NotesInteraction(path=f"{instance._path}/{instance.id}/notes", field="notes"))
+	def on_get_instance(self, instance, value):
+		class Note(_Note):
+			objects = manager.Manager(NotesInteraction(path=f"{instance._path}/{instance.id}/notes", field="notes"))
 
-        return Note
+		return Note
 
 
 class _AutoTypeField(fields._Field):
-    def __init__(self, *args, note_type, **kwargs):
-        self._auto_type = note_type
-        
-        file_name = "output.txt"
-        # Открываем файл для записи (или создаем, если не существует)
-        with open(file_name, "w") as file:
-            # Записываем значение переменной в файл
-            file.write(note_type)
-            file.write(self._auto_type)
+	def __init__(self, *args, note_type, **kwargs):
+		self._auto_type = note_type
+		super().__init__(*args, blank=True, path=["params"], **kwargs)
 
-        
-        super().__init__(*args, blank=True, path=["params"], **kwargs)
-
-    def on_set_instance(self, instance, value):
-        instance._data["note_type"] = self._auto_type
-        file_name = "output.txt"
-        # Открываем файл для записи (или создаем, если не существует)
-        with open(file_name, "w") as file:
-            # Записываем значение переменной в файл
-            file.write(instance._data["note_type"])
-            file.write(value)
-        return super().on_set_instance(instance, value)
+	def on_set_instance(self, instance, value):
+		instance._data["note_type"] = self._auto_type
+		return super().on_set_instance(instance, value)
 
 
 class _Note(model.Model):
-    note_type = fields._Field("note_type")
-    created_by = fields._Link("created_by", "User")
-    updated_by = fields._Link("updated_by", "User")
-    created_at = fields._DateTimeField("created_at")
-    updated_at = fields._DateTimeField("updated_at")
-    responsible_user = fields._Link("responsible_user_id", "User")
+	note_type = fields._Field("note_type")
+	created_by = fields._Link("created_by", "User")
+	updated_by = fields._Link("updated_by", "User")
+	created_at = fields._DateTimeField("created_at")
+	updated_at = fields._DateTimeField("updated_at")
+	responsible_user = fields._Link("responsible_user_id", "User")
 
-    objects = manager.Manager(NotesInteraction())
+	objects = manager.Manager(NotesInteraction())
 
-    # Type fields
+	# Type fields
 
-    text = _AutoTypeField("text", note_type=COMMON_TYPE)
+	text = _AutoTypeField("text", note_type=COMMON_TYPE)
 
-    uniq = _AutoTypeField("uniq", note_type=CALL_IN_TYPE)
-    duration = _AutoTypeField("duration", note_type=CALL_IN_TYPE)
-    source = _AutoTypeField("source", note_type=CALL_IN_TYPE)
-    link = _AutoTypeField("link", note_type=CALL_IN_TYPE)
-    phone = _AutoTypeField("phone", note_type=CALL_IN_TYPE)
+	uniq = _AutoTypeField("uniq", note_type=CALL_IN_TYPE)
+	duration = _AutoTypeField("duration", note_type=CALL_IN_TYPE)
+	source = _AutoTypeField("source", note_type=CALL_IN_TYPE)
+	link = _AutoTypeField("link", note_type=CALL_IN_TYPE)
+	phone = _AutoTypeField("phone", note_type=CALL_IN_TYPE)
 
-    address = _AutoTypeField("address", note_type=GEOLOCATION_TYPE)
-    longitude = _AutoTypeField("longitude", note_type=GEOLOCATION_TYPE)
-    latitude = _AutoTypeField("latitude", note_type=GEOLOCATION_TYPE)
-    
-    file_uuid = _AutoTypeField("file_uuid", note_type=ATTACMENT_TYPE)
-    file_name = _AutoTypeField("file_name", note_type=ATTACMENT_TYPE)
+	address = _AutoTypeField("address", note_type=GEOLOCATION_TYPE)
+	longitude = _AutoTypeField("longitude", note_type=GEOLOCATION_TYPE)
+	latitude = _AutoTypeField("latitude", note_type=GEOLOCATION_TYPE)
+	
+	# file_uuid = _AutoTypeField("file_uuid", note_type=ATTACMENT_TYPE)
+	# file_name = _AutoTypeField("file_name", note_type=ATTACMENT_TYPE)
