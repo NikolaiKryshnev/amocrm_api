@@ -122,12 +122,6 @@ class GenericInteraction(BaseInteraction):
 	def create(self, data):
 		print(f"Creating with data: {data}")
 		response, status = self.request("post", self._get_path(), data=[data])
-		file_name = "output.txt"
-		with open(file_name, "w") as file:
-			file.write(self)
-			file.write(data)
-		print(f"Response status: {status}")
-		print(f"Response data: {response}")
 		if status == 400:
 			raise exceptions.ValidationError(response)
 		return response["_embedded"][self._get_field()][0]
