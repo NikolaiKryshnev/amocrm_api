@@ -32,6 +32,12 @@ class BaseInteraction:
 		return "https://{subdomain}.amocrm.ru/api/v4/{path}".format(subdomain=self._token_manager.subdomain, path=path)
 
 	def _request(self, method, path, data=None, params=None, headers=None):
+
+		print(f"Creating with self: {self}")
+		print(f"Creating with method: {method}")
+		print(f"Creating with data: {data}")
+		print(f"Creating with params: {params}")
+		print(f"Creating with headers: {headers}")
 		headers = headers or {}
 		headers.update(self.get_headers())
 		try:
