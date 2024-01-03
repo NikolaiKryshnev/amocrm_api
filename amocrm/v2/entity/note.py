@@ -33,7 +33,7 @@ class _AutoTypeField(fields._Field):
 	def __init__(self, *args, note_type, **kwargs):
 		self._auto_type = note_type
 		print(f"_AutoTypeField - note_type: {note_type}")
-		print(f"_AutoTypeField - **kwargs: {**kwargs}")
+		print(f"_AutoTypeField - **kwargs: {kwargs}")
 		super().__init__(*args, blank=True, path=["params"], **kwargs)
 
 	def on_set_instance(self, instance, value):
