@@ -62,5 +62,5 @@ class _Note(model.Model):
 	longitude = _AutoTypeField("longitude", note_type=GEOLOCATION_TYPE)
 	latitude = _AutoTypeField("latitude", note_type=GEOLOCATION_TYPE)
 	
-	# file_uuid = _AutoTypeField("file_uuid", note_type=ATTACMENT_TYPE)
-	# file_name = _AutoTypeField("file_name", note_type=ATTACMENT_TYPE)
+	file_uuid = _AutoTypeField("file_uuid", note_type=ATTACMENT_TYPE)
+	file_name = _AutoTypeField("file_name", note_type=ATTACMENT_TYPE)
