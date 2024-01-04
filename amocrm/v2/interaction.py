@@ -35,21 +35,9 @@ class BaseInteraction:
 		print(f"_request - method: {method}")
 		print(f"_request - data: {data}")
 
-		new_data = None
-
-		# Проверяем, есть ли в data элемент с ключом 'note_type' и значением 'attachment'
-		if data and isinstance(data, list):
-			for item in data:
-				if 'note_type' in item and item['note_type'] == 'attachment':
-						# Создаем новый список с нужной структурой
-						new_data = [{'note_type': 'attachment', **item}]
-						break
-
-		# Если не найдено, просто используем исходные данные
-		new_data = new_data or data
-
-		print(f"_request - data: {new_data}")
-	
+		# Создаем новый список, если 'note_type' == 'attachment' в данных
+		new_data = [{'note_type': item.pop('note_type'), **item} if 'note_type' in item and item['note_type'] == 'attachment' else item for item in data]
+		print(f"_request - new_data: {new_data}")
 		headers = headers or {}
 		headers.update(self.get_headers())
 
@@ -68,7 +56,7 @@ class BaseInteraction:
 			raise exceptions.PermissionsDenyException()
 		if response.status_code == 402:
 			raise ValueError("Тариф не позволяет включать покупателей")
-
+		
 		print(f"_request - response.text: {response.text}")
 		raise exceptions.AmoApiException("Wrong status {} ({})".format(response.status_code, response.text))
 
@@ -162,6 +150,10 @@ class GenericInteraction(BaseInteraction):
 		if status == 400:
 			raise exceptions.ValidationError(response)
 		return response
+
+
+
+
 
 
 
