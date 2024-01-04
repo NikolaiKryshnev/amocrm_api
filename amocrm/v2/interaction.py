@@ -36,8 +36,13 @@ class BaseInteraction:
 		print(f"_request - data: {data}")
 
 		# Создаем новый список, если 'note_type' == 'attachment' в данных
-		new_data = [{'note_type': item.pop('note_type'), **item} if 'note_type' in item and item['note_type'] == 'attachment' else item for item in data]
-		print(f"_request - new_data: {new_data}")
+		if data is not None:
+			new_data = [{'note_type': item.pop('note_type'), **item} if 'note_type' in item and item['note_type'] == 'attachment' else item for item in data]
+		else:
+			new_data = None
+
+		print(f"_request - data: {new_data}")
+
 		headers = headers or {}
 		headers.update(self.get_headers())
 
@@ -56,7 +61,7 @@ class BaseInteraction:
 			raise exceptions.PermissionsDenyException()
 		if response.status_code == 402:
 			raise ValueError("Тариф не позволяет включать покупателей")
-		
+
 		print(f"_request - response.text: {response.text}")
 		raise exceptions.AmoApiException("Wrong status {} ({})".format(response.status_code, response.text))
 
