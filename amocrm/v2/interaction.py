@@ -36,6 +36,16 @@ class BaseInteraction:
 		print(f"_request - data: {data}")
 		headers = headers or {}
 		headers.update(self.get_headers())
+		
+		# Проверяем, что в данных есть ключ "note_type" и его значение равно "attachment"
+		if data and "note_type" in data and data["note_type"] == "attachment":
+			# Преобразуем данные, как требуется
+			transformed_data = {
+				"note_type": "attachment",
+				"params": data
+			}
+			return transformed_data, 200  # 200 - OK status, assuming a successful transformation
+		
 		try:
 			response = self._session.request(method, url=self._get_url(path), json=data, params=params, headers=headers)
 		except requests.exceptions.ConnectionError as e:
@@ -45,15 +55,6 @@ class BaseInteraction:
 			return None, 204
 
 		if response.status_code < 300 or response.status_code == 400:
-			# Проверяем, что ответ содержит note_type и его значение равно "attachment"
-			if "note_type" in response.json() and response.json()["note_type"] == "attachment":
-				# Преобразуем ответ, как требуется
-				transformed_response = {
-						"note_type": "attachment",
-						"params": response.json()
-				}
-				return transformed_response, response.status_code
-
 			return response.json(), response.status_code
 
 		if response.status_code == 401:
@@ -158,5 +159,8 @@ class GenericInteraction(BaseInteraction):
 		if status == 400:
 			raise exceptions.ValidationError(response)
 		return response
+
+
+
 
 
