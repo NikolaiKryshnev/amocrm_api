@@ -33,6 +33,9 @@ class BaseInteraction:
 
 	def _request(self, method, path, data=None, params=None, headers=None):
 		print(f"_request - method: {method}")
+		print(f"_request - data: {data}")
+
+		new_data = None
 
 		# Проверяем, есть ли в data элемент с ключом 'note_type' и значением 'attachment'
 		if data and isinstance(data, list):
@@ -41,11 +44,12 @@ class BaseInteraction:
 						# Создаем новый список с нужной структурой
 						new_data = [{'note_type': 'attachment', **item}]
 						break
-			else:
-				new_data = data
-				
+
+		# Если не найдено, просто используем исходные данные
+		new_data = new_data or data
 
 		print(f"_request - data: {data}")
+	
 		headers = headers or {}
 		headers.update(self.get_headers())
 
