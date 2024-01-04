@@ -34,21 +34,15 @@ class BaseInteraction:
 	def _request(self, method, path, data=None, params=None, headers=None):
 		print(f"_request - method: {method}")
 		print(f"_request - data: {data}")
+
 		headers = headers or {}
 		headers.update(self.get_headers())
-		
-		# Проверяем, что в данных есть ключ "note_type" и его значение равно "attachment"
-		if data and "note_type" in data and data["note_type"] == "attachment":
-			# Преобразуем данные, как требуется
-			transformed_data = {
-				"note_type": "attachment",
-				"params": data
-			}
-			data =  transformed_data
-			print(f"_request - transformed_data: {data}")
-		
+
+		# Модификация данных перед отправкой
+		modified_data = self.modify_request_data(data)
+
 		try:
-			response = self._session.request(method, url=self._get_url(path), json=data, params=params, headers=headers)
+			response = self._session.request(method, url=self._get_url(path), json=modified_data, params=params, headers=headers)
 		except requests.exceptions.ConnectionError as e:
 			raise exceptions.AmoApiException(e.args[0].args[0])  # Sometimes Connection aborted.
 
@@ -56,6 +50,7 @@ class BaseInteraction:
 			return None, 204
 
 		if response.status_code < 300 or response.status_code == 400:
+			# Обработка успешного запроса
 			return response.json(), response.status_code
 
 		if response.status_code == 401:
@@ -69,6 +64,27 @@ class BaseInteraction:
 
 		print(f"_request - response.text: {response.text}")
 		raise exceptions.AmoApiException("Wrong status {} ({})".format(response.status_code, response.text))
+
+	def modify_request_data(self, data):
+		modified_data = []
+
+		for item in data:
+			if 'note_type' in item and item['note_type'] == 'attachment':
+				# Если note_type равен 'attachment', изменяем структуру словаря
+				modified_item = {
+						"note_type": "attachment",
+						"params": {
+							"file_uuid": item.get("file_uuid", ""),
+							"version_uuid": item.get("version_uuid", ""),
+							"file_name": item.get("file_name", "")
+						}
+				}
+				modified_data.append(modified_item)
+			else:
+				# В противном случае оставляем словарь без изменений
+				modified_data.append(item)
+
+		return modified_data
 
 	def request(self, method, path, data=None, params=None, headers=None, include=None):
 		print(f"request - self: {self}")
@@ -160,6 +176,14 @@ class GenericInteraction(BaseInteraction):
 		if status == 400:
 			raise exceptions.ValidationError(response)
 		return response
+
+
+
+
+
+
+
+
 
 
 
