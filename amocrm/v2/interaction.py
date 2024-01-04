@@ -36,6 +36,9 @@ class BaseInteraction:
 		print(f"_request - method: {method}")
 		print(f"_request - data: {data}")
 
+		# Инициализируем other_data на всякий случай
+		other_data = {}
+
 		# Вносим изменения в структуру данных, если требуется
 		if data:
 			for item in data:
@@ -45,8 +48,6 @@ class BaseInteraction:
 						# Изменяем структуру словаря
 						item['note_type'] = {'attachment': other_data}
 
-		print(f"_request - data: {other_data}")
-		print(f"_request - data: {data}")
 		headers = headers or {}
 		headers.update(self.get_headers())
 		try:
@@ -66,7 +67,6 @@ class BaseInteraction:
 
 		print(f"_request - response.text: {response.text}")
 		raise exceptions.AmoApiException("Wrong status {} ({})".format(response.status_code, response.text))
-
 
 	def request(self, method, path, data=None, params=None, headers=None, include=None):
 		print(f"request - self: {self}")
@@ -158,6 +158,17 @@ class GenericInteraction(BaseInteraction):
 		if status == 400:
 			raise exceptions.ValidationError(response)
 		return response
+
+
+
+
+
+
+
+
+
+
+
 
 
 
