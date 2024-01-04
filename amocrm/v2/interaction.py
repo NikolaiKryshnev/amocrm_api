@@ -32,20 +32,24 @@ class BaseInteraction:
 		return "https://{subdomain}.amocrm.ru/api/v4/{path}".format(subdomain=self._token_manager.subdomain, path=path)
 
 	def _request(self, method, path, data=None, params=None, headers=None):
-
 		print(f"_request - method: {method}")
 		print(f"_request - data: {data}")
-		new_data = [{'note_type': item.pop('note_type'), **item} for item in data]
 
-		# Выводим результат
-		print(new_data)
+		# Проверка наличия данных
+		if data:
+			new_data = [{'note_type': item.pop('note_type'), **item} for item in data]
+			print(f"_request - new_data: {new_data}")
+		else:
+			new_data = None
 
 		headers = headers or {}
 		headers.update(self.get_headers())
+
 		try:
 			response = self._session.request(method, url=self._get_url(path), json=new_data, params=params, headers=headers)
 		except requests.exceptions.ConnectionError as e:
 			raise exceptions.AmoApiException(e.args[0].args[0])  # Sometimes Connection aborted.
+
 		if response.status_code == 204:
 			return None, 204
 		if response.status_code < 300 or response.status_code == 400:
@@ -150,15 +154,4 @@ class GenericInteraction(BaseInteraction):
 		if status == 400:
 			raise exceptions.ValidationError(response)
 		return response
-
-
-
-
-
-
-
-
-
-
-
 
