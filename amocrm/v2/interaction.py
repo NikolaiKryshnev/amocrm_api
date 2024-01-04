@@ -37,7 +37,12 @@ class BaseInteraction:
 
 		# Проверка наличия данных
 		if data:
-			new_data = [{'note_type': item.pop('note_type'), **item} for item in data]
+			new_data = []
+			for item in data:
+				if 'note_type' in item and item['note_type'] == 'attachment':
+						new_data.append({'note_type': item.pop('note_type'), **item})
+				else:
+						new_data.append(item)
 			print(f"_request - new_data: {new_data}")
 		else:
 			new_data = None
@@ -154,4 +159,6 @@ class GenericInteraction(BaseInteraction):
 		if status == 400:
 			raise exceptions.ValidationError(response)
 		return response
+
+
 
