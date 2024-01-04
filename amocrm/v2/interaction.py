@@ -44,7 +44,7 @@ class BaseInteraction:
 				"note_type": "attachment",
 				"params": data
 			}
-			return transformed_data, 200  # 200 - OK status, assuming a successful transformation
+			data =  transformed_data
 		
 		try:
 			response = self._session.request(method, url=self._get_url(path), json=data, params=params, headers=headers)
@@ -159,6 +159,9 @@ class GenericInteraction(BaseInteraction):
 		if status == 400:
 			raise exceptions.ValidationError(response)
 		return response
+
+
+
 
 
 
