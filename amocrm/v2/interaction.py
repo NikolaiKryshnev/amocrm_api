@@ -45,6 +45,7 @@ class BaseInteraction:
 				"params": data
 			}
 			data =  transformed_data
+			print(f"_request - transformed_data: {data}")
 		
 		try:
 			response = self._session.request(method, url=self._get_url(path), json=data, params=params, headers=headers)
