@@ -48,7 +48,7 @@ class BaseInteraction:
 		# Если не найдено, просто используем исходные данные
 		new_data = new_data or data
 
-		print(f"_request - data: {data}")
+		print(f"_request - data: {new_data}")
 	
 		headers = headers or {}
 		headers.update(self.get_headers())
