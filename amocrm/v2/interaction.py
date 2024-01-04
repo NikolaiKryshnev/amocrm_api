@@ -66,6 +66,9 @@ class BaseInteraction:
 		raise exceptions.AmoApiException("Wrong status {} ({})".format(response.status_code, response.text))
 
 	def modify_request_data(self, data):
+		if data is None:
+			return None
+
 		modified_data = []
 
 		for item in data:
@@ -176,6 +179,11 @@ class GenericInteraction(BaseInteraction):
 		if status == 400:
 			raise exceptions.ValidationError(response)
 		return response
+
+
+
+
+
 
 
 
