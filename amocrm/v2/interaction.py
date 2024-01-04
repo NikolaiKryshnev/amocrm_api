@@ -32,15 +32,28 @@ class BaseInteraction:
 		return "https://{subdomain}.amocrm.ru/api/v4/{path}".format(subdomain=self._token_manager.subdomain, path=path)
 
 	def _request(self, method, path, data=None, params=None, headers=None):
-
 		print(f"_request - method: {method}")
 		print(f"_request - data: {data}")
+
+		# Проверяем, есть ли в data элемент с ключом 'note_type' и значением 'attachment'
+		if data and isinstance(data, list):
+			for item in data:
+				if 'note_type' in item and item['note_type'] == 'attachment':
+						# Выносим 'note_type': 'attachment' выше уровнем
+						attachment_data = {'note_type': 'attachment'}
+						attachment_data.update(item)
+						data.remove(item)
+						data = [attachment_data] + data
+						break  # Прерываем цикл, т.к. мы уже переместили один элемент
+
 		headers = headers or {}
 		headers.update(self.get_headers())
+
 		try:
 			response = self._session.request(method, url=self._get_url(path), json=data, params=params, headers=headers)
 		except requests.exceptions.ConnectionError as e:
 			raise exceptions.AmoApiException(e.args[0].args[0])  # Sometimes Connection aborted.
+
 		if response.status_code == 204:
 			return None, 204
 		if response.status_code < 300 or response.status_code == 400:
