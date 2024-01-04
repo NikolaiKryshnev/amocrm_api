@@ -32,36 +32,36 @@ class BaseInteraction:
 		return "https://{subdomain}.amocrm.ru/api/v4/{path}".format(subdomain=self._token_manager.subdomain, path=path)
 
 	def _request(self, method, path, data=None, params=None, headers=None):
-
 		print(f"_request - method: {method}")
 		print(f"_request - data: {data}")
-
-		# Инициализируем other_data на всякий случай
-		other_data = {}
-
-		# Вносим изменения в структуру данных, если требуется
-		if data:
-			for item in data:
-				if item.get('note_type') == 'attachment':
-						# Сохраняем остальные ключи-значения, кроме 'note_type'
-						other_data = {k: v for k, v in item.items() if k != 'note_type'}
-						# Изменяем структуру словаря
-						item['note_type'] = {'attachment': other_data}
-
 		headers = headers or {}
 		headers.update(self.get_headers())
 		try:
 			response = self._session.request(method, url=self._get_url(path), json=data, params=params, headers=headers)
 		except requests.exceptions.ConnectionError as e:
 			raise exceptions.AmoApiException(e.args[0].args[0])  # Sometimes Connection aborted.
+
 		if response.status_code == 204:
 			return None, 204
+
 		if response.status_code < 300 or response.status_code == 400:
+			# Проверяем, что ответ содержит note_type и его значение равно "attachment"
+			if "note_type" in response.json() and response.json()["note_type"] == "attachment":
+				# Преобразуем ответ, как требуется
+				transformed_response = {
+						"note_type": "attachment",
+						"params": response.json()
+				}
+				return transformed_response, response.status_code
+
 			return response.json(), response.status_code
+
 		if response.status_code == 401:
 			raise exceptions.UnAuthorizedException()
+
 		if response.status_code == 403:
 			raise exceptions.PermissionsDenyException()
+
 		if response.status_code == 402:
 			raise ValueError("Тариф не позволяет включать покупателей")
 
@@ -158,28 +158,5 @@ class GenericInteraction(BaseInteraction):
 		if status == 400:
 			raise exceptions.ValidationError(response)
 		return response
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
