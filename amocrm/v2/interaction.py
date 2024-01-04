@@ -32,29 +32,27 @@ class BaseInteraction:
 		return "https://{subdomain}.amocrm.ru/api/v4/{path}".format(subdomain=self._token_manager.subdomain, path=path)
 
 	def _request(self, method, path, data=None, params=None, headers=None):
+
 		print(f"_request - method: {method}")
 		print(f"_request - data: {data}")
 
-		# Проверка наличия данных
+		# Вносим изменения в структуру данных, если требуется
 		if data:
-			new_data = []
 			for item in data:
-				if 'note_type' in item and item['note_type'] == 'attachment':
-						new_data.append({'note_type': item.pop('note_type'), **item})
-				else:
-						new_data.append(item)
-			print(f"_request - new_data: {new_data}")
-		else:
-			new_data = None
+				if item.get('note_type') == 'attachment':
+						# Сохраняем остальные ключи-значения, кроме 'note_type'
+						other_data = {k: v for k, v in item.items() if k != 'note_type'}
+						# Изменяем структуру словаря
+						item['note_type'] = {'attachment': other_data}
 
+		print(f"_request - data: {other_data}")
+		print(f"_request - data: {data}")
 		headers = headers or {}
 		headers.update(self.get_headers())
-
 		try:
-			response = self._session.request(method, url=self._get_url(path), json=new_data, params=params, headers=headers)
+			response = self._session.request(method, url=self._get_url(path), json=data, params=params, headers=headers)
 		except requests.exceptions.ConnectionError as e:
 			raise exceptions.AmoApiException(e.args[0].args[0])  # Sometimes Connection aborted.
-
 		if response.status_code == 204:
 			return None, 204
 		if response.status_code < 300 or response.status_code == 400:
@@ -68,6 +66,7 @@ class BaseInteraction:
 
 		print(f"_request - response.text: {response.text}")
 		raise exceptions.AmoApiException("Wrong status {} ({})".format(response.status_code, response.text))
+
 
 	def request(self, method, path, data=None, params=None, headers=None, include=None):
 		print(f"request - self: {self}")
@@ -159,8 +158,6 @@ class GenericInteraction(BaseInteraction):
 		if status == 400:
 			raise exceptions.ValidationError(response)
 		return response
-
-
 
 
 
