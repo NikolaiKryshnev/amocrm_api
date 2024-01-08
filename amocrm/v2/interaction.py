@@ -73,7 +73,7 @@ class BaseInteraction:
 		if data is None:
 			return None
 
-		modified_data = []
+		modified_data = None
 
 		for item in data:
 			if 'note_type' in item and item['note_type'] == 'attachment':
@@ -89,7 +89,7 @@ class BaseInteraction:
 				modified_data.append(modified_item)
 			else:
 				# В противном случае оставляем словарь без изменений
-				modified_data.append(item)
+				modified_data = data
 
 		return modified_data
 
