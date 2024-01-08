@@ -42,7 +42,9 @@ class BaseInteraction:
 		modified_data = self.modify_request_data(data)
 
 		try:
+			print(f"_request - data: {data}")
 			response = self._session.request(method, url=self._get_url(path), json=modified_data, params=params, headers=headers)
+			print(f"_request {response}")
 		except requests.exceptions.ConnectionError as e:
 			raise exceptions.AmoApiException(e.args[0].args[0])  # Sometimes Connection aborted.
 
@@ -62,7 +64,6 @@ class BaseInteraction:
 		if response.status_code == 402:
 			raise ValueError("Тариф не позволяет включать покупателей")
 
-		print(f"_request - response.text: {response.text}")
 		raise exceptions.AmoApiException("Wrong status {} ({})".format(response.status_code, response.text))
 
 	def modify_request_data(self, data):
@@ -90,12 +91,9 @@ class BaseInteraction:
 		return modified_data
 
 	def request(self, method, path, data=None, params=None, headers=None, include=None):
-		print(f"request - self: {self}")
 		print(f"request - method: {method}")
 		print(f"request - path: {path}")
 		print(f"request - data: {data}")
-		print(f"request - params: {params}")
-		print(f"request - include: {include}")
 		params = params or {}
 		if include:
 			params["with"] = ",".join(include)
@@ -165,12 +163,10 @@ class GenericInteraction(BaseInteraction):
 		return response
 
 	def create(self, data):
-		print(f"create - data: {data}")
 		response, status = self.request("post", self._get_path(), data=[data])
 		if status == 400:
 			raise exceptions.ValidationError(response)
 
-		print(f"create - response: {response}")
 		return response["_embedded"][self._get_field()][0]
 
 	def update(self, object_id, data):
