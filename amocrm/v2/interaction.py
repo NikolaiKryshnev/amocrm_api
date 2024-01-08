@@ -32,8 +32,6 @@ class BaseInteraction:
 		return "https://{subdomain}.amocrm.ru/api/v4/{path}".format(subdomain=self._token_manager.subdomain, path=path)
 
 	def _request(self, method, path, data=None, params=None, headers=None):
-		print(f"_request - method: {method}")
-		print(f"_request - data: {data}")
 
 		headers = headers or {}
 		headers.update(self.get_headers())
@@ -42,7 +40,12 @@ class BaseInteraction:
 		modified_data = self.modify_request_data(data)
 
 		try:
+			print(f"_request - method: {method}")
 			print(f"_request - data: {data}")
+			print(f"_request - self._get_url(path): {self._get_url(path)}")
+			print(f"_request - modified_data: {modified_data}")
+			print(f"_request - params: {params}")
+			print(f"_request - headers: {headers}")
 			response = self._session.request(method, url=self._get_url(path), json=modified_data, params=params, headers=headers)
 			print(f"_request {response}")
 		except requests.exceptions.ConnectionError as e:
@@ -171,28 +174,10 @@ class GenericInteraction(BaseInteraction):
 
 	def update(self, object_id, data):
 		path = "{}/{}".format(self._get_path(), object_id)
+		print(f"update - self: {self}")
+		print(f"update - object_id: {object_id}")
+		print(f"update - data: {data}")
 		response, status = self.request("patch", path, data=data)
 		if status == 400:
 			raise exceptions.ValidationError(response)
 		return response
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
