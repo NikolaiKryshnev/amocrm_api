@@ -73,7 +73,7 @@ class BaseInteraction:
 		if data is None:
 			return None
 
-		modified_data = None
+		modified_data = []
 
 		for item in data:
 			if 'note_type' in item and item['note_type'] == 'attachment':
