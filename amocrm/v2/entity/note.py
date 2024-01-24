@@ -24,7 +24,7 @@ class NotesField(fields._UnEditableField):
 	def on_get_instance(self, instance, value):
 		class Note(_Note):
 			objects = manager.Manager(NotesInteraction(path=f"{instance._path}/{instance.id}/notes", field="notes"))
-			print(f"_AutoTypeField - objects: {objects}")
+			
 
 		return Note
 
@@ -32,8 +32,7 @@ class NotesField(fields._UnEditableField):
 class _AutoTypeField(fields._Field):
 	def __init__(self, *args, note_type, **kwargs):
 		self._auto_type = note_type
-		print(f"_AutoTypeField - note_type: {note_type}")
-		print(f"_AutoTypeField - **kwargs: {kwargs}")
+		
 		super().__init__(*args, blank=True, path=["params"], **kwargs)
 
 	def on_set_instance(self, instance, value):
