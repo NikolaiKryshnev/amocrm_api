@@ -40,14 +40,8 @@ class BaseInteraction:
 		modified_data = self.modify_request_data(data)
 
 		try:
-			print(f"_request - method: {method}")
-			print(f"_request - data: {data}")
-			print(f"_request - self._get_url(path): {self._get_url(path)}")
-			print(f"_request - modified_data: {modified_data}")
-			print(f"_request - params: {params}")
-			print(f"_request - headers: {headers}")
 			response = self._session.request(method, url=self._get_url(path), json=modified_data, params=params, headers=headers)
-			print(f"_request {response}")
+			
 		except requests.exceptions.ConnectionError as e:
 			raise exceptions.AmoApiException(e.args[0].args[0])  # Sometimes Connection aborted.
 
