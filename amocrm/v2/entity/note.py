@@ -37,7 +37,6 @@ class _AutoTypeField(fields._Field):
 
 	def on_set_instance(self, instance, value):
 		instance._data["note_type"] = self._auto_type
-		print(f"on_set_instance - **instance._data: {instance._data["note_type"]}")
 		return super().on_set_instance(instance, value)
 
 
