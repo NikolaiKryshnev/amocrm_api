@@ -1,10 +1,17 @@
 from typing import Tuple
 
 import requests
+import logging
+
+
 
 from . import exceptions
 from .filters import Filter
 from .tokens import default_token_manager
+
+logger = logging.getLogger()
+# Установка уровня логгирования
+logger.setLevel(logging.INFO)
 
 _session = requests.Session()
 
@@ -29,7 +36,7 @@ class BaseInteraction:
 		return {"Authorization": "Bearer " + self._token_manager.get_access_token()}
 
 	def _get_url(self, path):
-		print(f"path:{path}")
+		logger.info(f"path:{path}")
 		return "https://{subdomain}.amocrm.ru/api/v4/{path}".format(subdomain=self._token_manager.subdomain, path=path)
 
 	def _request(self, method, path, data=None, params=None, headers=None):
@@ -89,9 +96,9 @@ class BaseInteraction:
 		return modified_data
 
 	def request(self, method, path, data=None, params=None, headers=None, include=None):
-		print(f"request - method: {method}")
-		print(f"request - path: {path}")
-		print(f"request - data: {data}")
+		logger.info(f"request - method: {method}")
+		logger.info(f"request - path: {path}")
+		logger.info(f"request - data: {data}")
 		params = params or {}
 		if include:
 			params["with"] = ",".join(include)
