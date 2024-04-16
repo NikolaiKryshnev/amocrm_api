@@ -35,7 +35,7 @@ class BaseInteraction:
 		return {"Authorization": "Bearer " + self._token_manager.get_access_token()}
 
 	def _get_url(self, path):
-		logger.info(f"path:{path}")
+		logger.debag(f"path:{path}")
 		return "https://{subdomain}.amocrm.ru/api/v4/{path}".format(subdomain=self._token_manager.subdomain, path=path)
 
 	def _request(self, method, path, data=None, params=None, headers=None):
@@ -95,9 +95,9 @@ class BaseInteraction:
 		return modified_data
 
 	def request(self, method, path, data=None, params=None, headers=None, include=None):
-		logger.info(f"request - method: {method}")
-		logger.info(f"request - path: {path}")
-		logger.info(f"request - data: {data}")
+		logger.debag(f"request - method: {method}")
+		logger.debag(f"request - path: {path}")
+		logger.debag(f"request - data: {data}")
 		params = params or {}
 		if include:
 			params["with"] = ",".join(include)
