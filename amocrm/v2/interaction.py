@@ -29,6 +29,7 @@ class BaseInteraction:
 		return {"Authorization": "Bearer " + self._token_manager.get_access_token()}
 
 	def _get_url(self, path):
+		print(f"path:{path}")
 		return "https://{subdomain}.amocrm.ru/api/v4/{path}".format(subdomain=self._token_manager.subdomain, path=path)
 
 	def _request(self, method, path, data=None, params=None, headers=None):
@@ -168,9 +169,6 @@ class GenericInteraction(BaseInteraction):
 
 	def update(self, object_id, data):
 		path = "{}/{}".format(self._get_path(), object_id)
-		print(f"update - self: {self}")
-		print(f"update - object_id: {object_id}")
-		print(f"update - data: {data}")
 		response, status = self.request("patch", path, data=data)
 		if status == 400:
 			raise exceptions.ValidationError(response)
