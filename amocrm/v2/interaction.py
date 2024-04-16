@@ -9,9 +9,6 @@ from . import exceptions
 from .filters import Filter
 from .tokens import default_token_manager
 
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
-
 _session = requests.Session()
 
 
