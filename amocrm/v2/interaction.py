@@ -10,8 +10,7 @@ from .filters import Filter
 from .tokens import default_token_manager
 
 logger = logging.getLogger()
-# Установка уровня логгирования
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 _session = requests.Session()
 
