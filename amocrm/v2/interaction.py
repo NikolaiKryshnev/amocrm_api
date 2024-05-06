@@ -91,14 +91,16 @@ class BaseInteraction:
 		return modified_data
 
 	def request(self, method, path, data=None, params=None, headers=None, include=None):
-		for item in data['custom_fields_values']:
-		    del item['field_code']
-		    del item['field_name']
-		logging.debug(f"request - data: {data}")
+		modified_data = copy.deepcopy(data)
+ 		if modified_data:
+			for item in data['custom_fields_values']:
+			    del item['field_code']
+			    del item['field_name']
+		logging.debug(f"request - modified_data: {modified_data}")
 		params = params or {}
 		if include:
 			params["with"] = ",".join(include)
-		return self._request(method, path, data=data, params=params, headers=headers)
+		return self._request(method, path, data=modified_data, params=params, headers=headers)
 
 	def _list(self, path, page, include=None, limit=250, query=None, filters: Tuple[Filter] = (), order=None):
 		assert order is None or len(order) == 1
