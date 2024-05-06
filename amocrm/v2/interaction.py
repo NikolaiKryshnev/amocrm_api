@@ -93,7 +93,7 @@ class BaseInteraction:
 	def request(self, method, path, data=None, params=None, headers=None, include=None):
 		for item in data['custom_fields_values']:
 		    del item['field_code']
-		    del item['field_type']
+		    del item['field_name']
 		logging.debug(f"request - data: {data}")
 		params = params or {}
 		if include:
