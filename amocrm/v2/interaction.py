@@ -92,10 +92,10 @@ class BaseInteraction:
 
 	def request(self, method, path, data=None, params=None, headers=None, include=None):
 		modified_data = copy.deepcopy(data)
- 		if modified_data:
+		if modified_data:
 			for item in data['custom_fields_values']:
-			    del item['field_code']
-			    del item['field_name']
+				del item['field_code']
+				del item['field_name']
 		logging.debug(f"request - modified_data: {modified_data}")
 		params = params or {}
 		if include:
