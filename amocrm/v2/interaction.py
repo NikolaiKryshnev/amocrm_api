@@ -67,28 +67,51 @@ class BaseInteraction:
 
 		raise exceptions.AmoApiException("Wrong status {} ({})".format(response.status_code, response.text))
 
+	# def modify_request_data(self, data):
+	# 	if data is None:
+	# 		return None
+
+	# 	modified_data = []
+
+	# 	for item in data:
+	# 		if 'note_type' in item and item['note_type'] == 'attachment':
+	# 			# Если note_type равен 'attachment', изменяем структуру словаря
+	# 			modified_item = {
+	# 					"note_type": "attachment",
+	# 					"params": {
+	# 						"file_uuid": item.get("file_uuid", ""),
+	# 						"version_uuid": item.get("version_uuid", ""),
+	# 						"file_name": item.get("file_name", "")
+	# 					}
+	# 			}
+	# 			modified_data.append(modified_item)
+	# 		else:
+	# 			# В противном случае оставляем словарь без изменений
+	# 			modified_data = data
+
+	# 	return modified_data
 	def modify_request_data(self, data):
 		if data is None:
 			return None
-
 		modified_data = []
-
+		
 		for item in data:
+			item.pop('field_code', None)
+			item.pop('field_type', None)
+			item.pop('field_name', None)
+			
 			if 'note_type' in item and item['note_type'] == 'attachment':
-				# Если note_type равен 'attachment', изменяем структуру словаря
 				modified_item = {
-						"note_type": "attachment",
-						"params": {
-							"file_uuid": item.get("file_uuid", ""),
-							"version_uuid": item.get("version_uuid", ""),
-							"file_name": item.get("file_name", "")
-						}
+					"note_type": "attachment",
+					"params": {
+						"file_uuid": item.get("file_uuid", ""),
+						"version_uuid": item.get("version_uuid", ""),
+						"file_name": item.get("file_name", "")
+					}
 				}
 				modified_data.append(modified_item)
 			else:
-				# В противном случае оставляем словарь без изменений
 				modified_data = data
-
 		return modified_data
 
 	def request(self, method, path, data=None, params=None, headers=None, include=None):
